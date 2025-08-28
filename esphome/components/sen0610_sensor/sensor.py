@@ -1,5 +1,5 @@
 import esphome.codegen as cg
-from esphome.components import i2c, number, sensor
+from esphome.components import button, i2c, number, sensor
 import esphome.config_validation as cv
 from esphome.const import ICON_HEART_PULSE, UNIT_EMPTY
 
@@ -19,6 +19,8 @@ CONF_DETECTION_RANGE_THRESHOLD = "detection_range_threshold"
 CONF_DETECTION_DELAY = "detection_delay"
 CONF_DETECTION_KEEPDELAY = "detection_keepdelay"
 CONF_RADAR_KEEP_SENSITIVITY = "radar_keep_sensitivity"
+CONF_RESET_SENSOR_BUTTON = "reset_sensor_button"
+CONF_RECOVER_SENSOR_BUTTON = "recover_sensor_button"
 
 CONFIG_SCHEMA = (
     sensor.sensor_schema(
@@ -51,10 +53,12 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_DETECTION_DELAY): cv.use_id(number.Number),
             cv.Optional(CONF_DETECTION_KEEPDELAY): cv.use_id(number.Number),
             cv.Optional(CONF_RADAR_KEEP_SENSITIVITY): cv.use_id(number.Number),
+            cv.Optional(CONF_RESET_SENSOR_BUTTON): cv.use_id(button.Button),
+            cv.Optional(CONF_RECOVER_SENSOR_BUTTON): cv.use_id(button.Button),
         }
     )
     .extend(cv.polling_component_schema("5s"))
-    .extend(i2c.i2c_device_schema(0x20))
+    .extend(i2c.i2c_device_schema(0x2A))
 )
 
 
@@ -100,5 +104,13 @@ async def to_code(config):
         cg.add(var.set_detection_keepdelay_number(keep_num))
 
     if CONF_RADAR_KEEP_SENSITIVITY in config:
-        keep_num = await cg.get_variable(config[CONF_RADAR_KEEP_SENSITIVITY])
-        cg.add(var.set_radar_keep_sensitivity_number(keep_num))
+        keep_sen = await cg.get_variable(config[CONF_RADAR_KEEP_SENSITIVITY])
+        cg.add(var.set_radar_keep_sensitivity_number(keep_sen))
+
+    if CONF_RESET_SENSOR_BUTTON in config:
+        reset_btn = await cg.get_variable(config[CONF_RESET_SENSOR_BUTTON])
+        cg.add(var.set_reset_sensor_button(reset_btn))
+
+    if CONF_RECOVER_SENSOR_BUTTON in config:
+        recover_btn = await cg.get_variable(config[CONF_RECOVER_SENSOR_BUTTON])
+        cg.add(var.set_recover_sensor_button(recover_btn))

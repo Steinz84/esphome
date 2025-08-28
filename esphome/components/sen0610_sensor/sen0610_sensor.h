@@ -3,6 +3,8 @@
 #include "esphome/components/i2c/i2c.h"
 #include "DFRobot_C4001.h"
 #include "esphome/components/number/number.h"
+#include "esphome/components/button/button.h"
+#define I2C_COMMUNICATION
 
 namespace esphome {
 namespace sen0610_sensor {
@@ -23,10 +25,19 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
 
   void update_detection_thresholds();
   void update_delay_thresholds();
+  void setup_sensor();
   void set_detection_delay_number(number::Number *number) { detection_delay_ = number; }
   void set_detection_keepdelay_number(number::Number *number) { detection_keepdelay_ = number; }
+  void set_reset_sensor_button(button::Button *button) { reset_sensor_button_ = button; }
+  void reset_sensor();
+  void set_recover_sensor_button(button::Button *button) { recover_sensor_button_ = button; }
+  void recover_sensor();
+  bool busy_ = false;
+  uint32_t busy_until_ = 0;
+  static constexpr uint32_t SENSOR_BUSY_MS = 3000;
 
  protected:
+  bool radar_initialized_{false};
   DFRobot_C4001_I2C radar_;  // Radar object lives as long as the component
   sensor::Sensor *target_energy_{nullptr};
   sensor::Sensor *target_speed_{nullptr};
@@ -38,6 +49,8 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
   number::Number *detection_delay_{nullptr};
   number::Number *detection_keepdelay_{nullptr};
   number::Number *radar_keep_sensitivity_{nullptr};
+  button::Button *reset_sensor_button_{nullptr};
+  button::Button *recover_sensor_button_{nullptr};
 };
 
 }  // namespace sen0610_sensor
