@@ -32,6 +32,9 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
   void reset_sensor();
   void set_recover_sensor_button(button::Button *button) { recover_sensor_button_ = button; }
   void recover_sensor();
+  void set_save_config_button(button::Button *button) { save_config_button_ = button; }
+  void save_config();
+
   bool busy_ = false;
   uint32_t busy_until_ = 0;
   static constexpr uint32_t SENSOR_BUSY_MS = 3000;
@@ -51,6 +54,7 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
   number::Number *radar_keep_sensitivity_{nullptr};
   button::Button *reset_sensor_button_{nullptr};
   button::Button *recover_sensor_button_{nullptr};
+  button::Button *save_config_button_{nullptr};
 };
 
 }  // namespace sen0610_sensor

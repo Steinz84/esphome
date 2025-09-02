@@ -157,6 +157,9 @@ void Sen0610Sensor::setup() {
   if (this->recover_sensor_button_ != nullptr) {
     this->recover_sensor_button_->add_on_press_callback([this]() { this->recover_sensor(); });
   }
+  if (this->save_config_button_ != nullptr) {
+    this->save_config_button_->add_on_press_callback([this]() { this->save_config(); });
+  }
 }
 void Sen0610Sensor::reset_sensor() {
   if (busy_ && millis() < busy_until_) {
@@ -176,6 +179,17 @@ void Sen0610Sensor::recover_sensor() {
   }
   ESP_LOGI(TAG, "Recovering sensor...");
   radar_.setSensor(eRecoverSen);  // Or your actual recover logic
+  busy_ = true;
+  busy_until_ = millis() + SENSOR_BUSY_MS;
+}
+
+void Sen0610Sensor::save_config() {
+  if (busy_ && millis() < busy_until_) {
+    ESP_LOGW(TAG, "Sensor busy, skipping command");
+    return;
+  }
+  ESP_LOGI(TAG, "Saving sensor configuration...");
+  radar_.setSensor(eSaveParams);  // Or your actual save config logic
   busy_ = true;
   busy_until_ = millis() + SENSOR_BUSY_MS;
 }
@@ -215,8 +229,6 @@ void Sen0610Sensor::update() {
              "%u trigdelay: %u ",
              radar_.getTrigSensitivity(), radar_.getKeepSensitivity(), radar_.getMinRange(), radar_.getMaxRange(),
              radar_.getTrigRange(), radar_.getKeepTimerout(), radar_.getTrigDelay());
-
-    // Update radar trigger sensitivity from number entity
 
     // Publish the response as a sensor state
     this->publish_state(radar_.getTargetNumber());

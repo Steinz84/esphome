@@ -21,6 +21,7 @@ CONF_DETECTION_KEEPDELAY = "detection_keepdelay"
 CONF_RADAR_KEEP_SENSITIVITY = "radar_keep_sensitivity"
 CONF_RESET_SENSOR_BUTTON = "reset_sensor_button"
 CONF_RECOVER_SENSOR_BUTTON = "recover_sensor_button"
+CONF_SAVE_CONFIG_BUTTON = "save_config_button"
 
 CONFIG_SCHEMA = (
     sensor.sensor_schema(
@@ -55,6 +56,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_RADAR_KEEP_SENSITIVITY): cv.use_id(number.Number),
             cv.Optional(CONF_RESET_SENSOR_BUTTON): cv.use_id(button.Button),
             cv.Optional(CONF_RECOVER_SENSOR_BUTTON): cv.use_id(button.Button),
+            cv.Optional(CONF_SAVE_CONFIG_BUTTON): cv.use_id(button.Button),
         }
     )
     .extend(cv.polling_component_schema("5s"))
@@ -114,3 +116,7 @@ async def to_code(config):
     if CONF_RECOVER_SENSOR_BUTTON in config:
         recover_btn = await cg.get_variable(config[CONF_RECOVER_SENSOR_BUTTON])
         cg.add(var.set_recover_sensor_button(recover_btn))
+
+    if CONF_SAVE_CONFIG_BUTTON in config:
+        save_btn = await cg.get_variable(config[CONF_SAVE_CONFIG_BUTTON])
+        cg.add(var.set_save_config_button(save_btn))
