@@ -114,6 +114,12 @@ bool DFRobot_C4001::setDelay(uint8_t trig, uint16_t keep) {
   temp[0] = trig;
   temp[1] = keep;
   temp[2] = keep >> 8;
+  Serial.print("[setDelay] keep value: ");
+  Serial.println(keep);
+  Serial.print("[setDelay] temp[1] (low byte): 0x");
+  Serial.println(temp[1], HEX);
+  Serial.print("[setDelay] temp[2] (high byte): 0x");
+  Serial.println(temp[2], HEX);
   writeReg(REG_TRIG_DELAY, temp, (uint8_t) 3);
   setSensor(eSaveParams);
   return true;
@@ -122,13 +128,22 @@ bool DFRobot_C4001::setDelay(uint8_t trig, uint16_t keep) {
 uint8_t DFRobot_C4001::getTrigDelay(void) {
   uint8_t temp = 0;
   readReg(REG_TRIG_DELAY, &temp, (uint8_t) 1);
+  Serial.print("[getTrigDelay] raw value: 0x");
+  Serial.println(temp, HEX);
   return temp;
 }
 
 uint16_t DFRobot_C4001::getKeepTimerout(void) {
   uint8_t temp[2] = {0};
   readReg(REG_KEEP_TIMEOUT_L, temp, (uint8_t) 2);
-  return (((uint16_t) temp[1]) << 8) | temp[0];
+  Serial.print("[getKeepTimerout] temp[0] (low byte): 0x");
+  Serial.println(temp[0], HEX);
+  Serial.print("[getKeepTimerout] temp[1] (high byte): 0x");
+  Serial.println(temp[1], HEX);
+  uint16_t val = (((uint16_t) temp[1]) << 8) | temp[0];
+  Serial.print("[getKeepTimerout] reconstructed value: ");
+  Serial.println(val);
+  return val;
 }
 
 bool DFRobot_C4001::setDetectionRange(uint16_t min, uint16_t max, uint16_t trig) {
@@ -138,7 +153,7 @@ bool DFRobot_C4001::setDetectionRange(uint16_t min, uint16_t max, uint16_t trig)
   if (min < 30 || min > max) {
     return false;
   }
-  uint8_t temp[10] = {0};
+  uint8_t temp[6] = {0};
   temp[0] = (uint8_t) (min);
   temp[1] = (uint8_t) (min >> 8);
   temp[2] = (uint8_t) (max);
@@ -401,7 +416,8 @@ DFRobot_C4001_I2C::DFRobot_C4001_I2C(TwoWire *pWire, uint8_t addr) {
   _pWire = pWire;
   this->_I2C_addr = addr;
   uartI2CFlag = I2C_FLAG;
-  //  _pWire->setClock(1000000);  // I2C clock speed doesnt seem to affect register overwite issue
+  //  _pWire->setClock(20000);  // I2C clock speed doesnt seem to affect register overwite issue
+  //  _pWire->setClockStretchLimit(10000); //default is 2300us - stretch limit doesnt help either
 }
 
 bool DFRobot_C4001_I2C::begin() {

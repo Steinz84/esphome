@@ -34,6 +34,10 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
   void recover_sensor();
   void set_save_config_button(button::Button *button) { save_config_button_ = button; }
   void save_config();
+  void set_start_sensor_button(button::Button *button) { start_sensor_button_ = button; }
+  void start_sensor();
+  void set_stop_sensor_button(button::Button *button) { stop_sensor_button_ = button; }
+  void stop_sensor();
 
   bool busy_ = false;
   uint32_t busy_until_ = 0;
@@ -55,6 +59,8 @@ class Sen0610Sensor : public sensor::Sensor, public PollingComponent, public i2c
   button::Button *reset_sensor_button_{nullptr};
   button::Button *recover_sensor_button_{nullptr};
   button::Button *save_config_button_{nullptr};
+  button::Button *start_sensor_button_{nullptr};
+  button::Button *stop_sensor_button_{nullptr};
 };
 
 }  // namespace sen0610_sensor

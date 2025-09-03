@@ -22,6 +22,8 @@ CONF_RADAR_KEEP_SENSITIVITY = "radar_keep_sensitivity"
 CONF_RESET_SENSOR_BUTTON = "reset_sensor_button"
 CONF_RECOVER_SENSOR_BUTTON = "recover_sensor_button"
 CONF_SAVE_CONFIG_BUTTON = "save_config_button"
+CONF_STOP_SENSOR_BUTTON = "stop_sensor_button"
+CONF_START_SENSOR_BUTTON = "start_sensor_button"
 
 CONFIG_SCHEMA = (
     sensor.sensor_schema(
@@ -120,3 +122,11 @@ async def to_code(config):
     if CONF_SAVE_CONFIG_BUTTON in config:
         save_btn = await cg.get_variable(config[CONF_SAVE_CONFIG_BUTTON])
         cg.add(var.set_save_config_button(save_btn))
+
+    if CONF_START_SENSOR_BUTTON in config:
+        start_btn = await cg.get_variable(config[CONF_START_SENSOR_BUTTON])
+        cg.add(var.set_start_sensor_button(start_btn))
+
+    if CONF_STOP_SENSOR_BUTTON in config:
+        stop_btn = await cg.get_variable(config[CONF_STOP_SENSOR_BUTTON])
+        cg.add(var.set_stop_sensor_button(stop_btn))

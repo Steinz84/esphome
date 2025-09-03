@@ -80,8 +80,8 @@ void Sen0610Sensor::update_detection_thresholds() {
 
 void Sen0610Sensor::setup_sensor() {
   // radar_.setSensor(eRecoverSen);
-  radar_.setFrettingDetection(eON);
-  radar_.setSensorMode(eSpeedMode);
+  // radar_.setFrettingDetection(eON);
+  // radar_.setSensorMode(eSpeedMode);
   // radar_.setSensor(eResetSen);
 }
 
@@ -160,6 +160,13 @@ void Sen0610Sensor::setup() {
   if (this->save_config_button_ != nullptr) {
     this->save_config_button_->add_on_press_callback([this]() { this->save_config(); });
   }
+  if (this->start_sensor_button_ != nullptr) {
+    this->start_sensor_button_->add_on_press_callback([this]() { this->start_sensor(); });
+  }
+
+  if (this->stop_sensor_button_ != nullptr) {
+    this->stop_sensor_button_->add_on_press_callback([this]() { this->stop_sensor(); });
+  }
 }
 void Sen0610Sensor::reset_sensor() {
   if (busy_ && millis() < busy_until_) {
@@ -179,6 +186,28 @@ void Sen0610Sensor::recover_sensor() {
   }
   ESP_LOGI(TAG, "Recovering sensor...");
   radar_.setSensor(eRecoverSen);  // Or your actual recover logic
+  busy_ = true;
+  busy_until_ = millis() + SENSOR_BUSY_MS;
+}
+
+void Sen0610Sensor::start_sensor() {
+  if (busy_ && millis() < busy_until_) {
+    ESP_LOGW(TAG, "Sensor busy, skipping command");
+    return;
+  }
+  ESP_LOGI(TAG, "Starting sensor...");
+  radar_.setSensor(eStartSen);  // Or your actual start logic
+  busy_ = true;
+  busy_until_ = millis() + SENSOR_BUSY_MS;
+}
+
+void Sen0610Sensor::stop_sensor() {
+  if (busy_ && millis() < busy_until_) {
+    ESP_LOGW(TAG, "Sensor busy, skipping command");
+    return;
+  }
+  ESP_LOGI(TAG, "Stopping sensor...");
+  radar_.setSensor(eStopSen);  // Or your actual stop logic
   busy_ = true;
   busy_until_ = millis() + SENSOR_BUSY_MS;
 }

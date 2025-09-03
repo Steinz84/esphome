@@ -13,6 +13,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "esphome/core/log.h"
 
 #if defined(ARDUINO_AVR_UNO) || defined(ESP8266)
 #else
@@ -330,6 +331,7 @@ class DFRobot_C4001 {
    * @brief Get the Target Number object
    * @return uint8_t
    */
+  // TODO: could update this to return the target array of speed energy etc
   uint8_t getTargetNumber(void);
 
   /**
